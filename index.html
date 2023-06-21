@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Database</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // jPDB API endpoint
+    const apiUrl = 'https://www.login2xplore.com';
+
+    // Function to create a new student record
+    function createStudent() {
+      const name = $('#name').val();
+      const age = $('#age').val();
+      const email = $('#email').val();
+
+      const student = { name, age, email };
+
+      $.ajax({
+        url: apiUrl + '/students',
+        type: 'POST',
+        data: JSON.stringify(student),
+        contentType: 'application/json',
+        success: function(response) {
+          console.log('Student created:', response);
+          alert('Student created successfully!');
+        },
+        error: function(error) {
+          console.error('Error creating student:', error);
+          alert('An error occurred while creating the student.');
+        }
+      });
+    }
+
+    // Function to retrieve all student records
+    function getStudents() {
+      $.ajax({
+        url: apiUrl + '/students',
+        type: 'GET',
+        success: function(response) {
+          console.log('Students:', response);
+          displayStudents(response);
+        },
+        error: function(error) {
+          console.error('Error retrieving students:', error);
+          alert('An error occurred while retrieving students.');
+        }
+      });
+    }
+
+    // Function to display the student records
+    function displayStudents(students) {
+      const table = $('#studentsTable');
+      table.empty();
+
+      const tableHeader = $('<tr><th>Name</th><th>Age</th><th>Email</th></tr>');
+      table.append(tableHeader);
+
+      students.forEach(function(student) {
+        const row = $('<tr></tr>');
+        row.append('<td>' + student.name + '</td>');
+        row.append('<td>' + student.age + '</td>');
+        row.append('<td>' + student.email + '</td>');
+        table.append(row);
+      });
+    }
+
+    // Function to clear the input fields
+    function clearFields() {
+      $('#name').val('');
+      $('#age').val('');
+      $('#email').val('');
+    }
+
+    // Wait for the document to be ready
+    $(document).ready(function() {
+      // Retrieve and display the existing students
+      getStudents();
+
+      // Event listener for the "Add Student" button
+      $('#addStudentBtn').click(function() {
+        createStudent();
+        clearFields();
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Student Database</h1>
+  <table id="studentsTable"></table>
+  <br>
+  <h2>Add Student</h2>
+  <label>Name:</label>
+  <input type="text" id="name" required><br>
+  <label>Age:</label>
+  <input type="number" id="age" required><br>
+  <label>Email:</label>
+  <input type="email" id="email" required><br>
+  <button id="addStudentBtn">Add Student</button>
+</body>
+</html>
